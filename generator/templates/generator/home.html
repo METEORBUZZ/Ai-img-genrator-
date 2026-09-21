@@ -1,0 +1,114 @@
+{% extends 'generator/base.html' %}
+
+{% block title %}Create Anything with AI &mdash; AI Image Generator{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+  <h1 class="hero-title">Create anything with AI</h1>
+  <p class="hero-subtitle">Turn your imagination into beautiful images. Describe your idea and let AI bring it to life.</p>
+</section>
+
+{% if api_error %}
+  <div class="alert alert-error" role="alert">
+    <strong>Error:</strong> {{ api_error }}
+  </div>
+{% endif %}
+
+{% if form.errors %}
+  <div class="alert alert-error" role="alert">
+    <strong>Please correct the errors below:</strong>
+    <ul style="margin-top: 6px; padding-left: 20px;">
+      {% for field in form %}
+        {% for error in field.errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+<section class="generator-card" aria-labelledby="form-heading">
+  <h2 class="card-title" id="form-heading">
+    <span>✦</span> Describe your image
+  </h2>
+
+  <form action="{% url 'generate' %}" method="POST" class="generator-form" novalidate>
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="prompt-input" class="form-label">Image Description</label>
+      {{ form.prompt }}
+      {% if form.prompt.errors %}
+        <div class="field-error">
+          {% for error in form.prompt.errors %}{{ error }}{% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="style-select" class="form-label">Style</label>
+        {{ form.style }}
+        {% if form.style.errors %}
+          <div class="field-error">
+            {% for error in form.style.errors %}{{ error }}{% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="aspect-ratio-select" class="form-label">Aspect Ratio</label>
+        {{ form.aspect_ratio }}
+        {% if form.aspect_ratio.errors %}
+          <div class="field-error">
+            {% for error in form.aspect_ratio.errors %}{{ error }}{% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block" id="btn-generate">
+      <span>✨</span> Generate Image
+    </button>
+  </form>
+</section>
+
+<section class="empty-state-card" aria-label="Creation Preview">
+  <div class="empty-icon">✦</div>
+  <h3 class="empty-title">Your creation will appear here</h3>
+  <p class="empty-desc">Enter a prompt and generate your first AI image.</p>
+</section>
+
+{% if recent_generations %}
+  <section style="margin-top: 50px;">
+    <div class="page-header" style="margin-bottom: 20px;">
+      <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--primary-text);">Recent Generations</h3>
+      <a href="{% url 'history' %}" class="btn btn-secondary btn-sm">View All in History &rarr;</a>
+    </div>
+    <div class="history-grid">
+      {% for item in recent_generations %}
+        <article class="history-card">
+          <a href="{% url 'detail' item.id %}" class="history-image-link" aria-label="View {{ item.prompt }}">
+            <img src="{{ item.image_url }}" alt="{{ item.prompt }}" class="history-image" loading="lazy" referrerpolicy="no-referrer">
+          </a>
+          <div class="history-content">
+            <h4 class="history-prompt">{{ item.prompt }}</h4>
+            <div class="history-badges">
+              <span class="tag-badge">{{ item.style }}</span>
+              <span class="tag-badge">{{ item.aspect_ratio }}</span>
+            </div>
+            <p class="history-date">{{ item.created_at|date:"F j, Y" }}</p>
+            <div class="history-actions">
+              <a href="{% url 'detail' item.id %}" class="btn btn-secondary btn-sm">View Details</a>
+              <a href="{% url 'download' item.id %}" class="btn btn-primary btn-sm" download>Download</a>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}
+{% endblock %}

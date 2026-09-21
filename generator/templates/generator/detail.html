@@ -1,0 +1,90 @@
+{% extends 'generator/base.html' %}
+
+{% block title %}Generation Details &mdash; AI Image Generator{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <a href="{% url 'history' %}" class="btn btn-secondary btn-sm" style="margin-bottom: 12px; display: inline-flex;">
+      &larr; Back to History
+    </a>
+    <h1 class="page-title">Generation Details</h1>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <a href="{% url 'download' generation.id %}" class="btn btn-primary" download id="btn-detail-download">
+      <span>⬇</span> Download Image
+    </a>
+  </div>
+</div>
+
+{% if confirm_delete %}
+  <div class="confirm-box" role="alert">
+    <h2 class="confirm-title">Are you sure you want to delete this generation?</h2>
+    <p class="confirm-text">This will permanently remove this image generation record and prompt from the database. This action cannot be undone.</p>
+    <div style="display: flex; gap: 12px;">
+      <form action="{% url 'delete' generation.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirm Delete</button>
+      </form>
+      <a href="{% url 'detail' generation.id %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </div>
+{% endif %}
+
+<article class="result-card">
+  <div class="result-image-box">
+    <img 
+      src="{{ generation.image_url }}" 
+      alt="{{ generation.prompt }}" 
+      class="result-image"
+      referrerpolicy="no-referrer"
+    >
+  </div>
+
+  <div class="result-content">
+    <div class="prompt-display-box">
+      <div class="prompt-display-label">Full Prompt</div>
+      <p class="prompt-display-text">{{ generation.prompt }}</p>
+    </div>
+
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">Style</span>
+        <span class="meta-value">{{ generation.style }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Aspect Ratio</span>
+        <span class="meta-value">{{ generation.aspect_ratio }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Created Date</span>
+        <span class="meta-value">{{ generation.created_at|date:"F j, Y, g:i a" }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Generation ID</span>
+        <span class="meta-value">#{{ generation.id }}</span>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <a href="{% url 'download' generation.id %}" class="btn btn-primary" download>
+        <span>⬇</span> Download Image
+      </a>
+      <a href="{% url 'home' %}" class="btn btn-secondary">
+        <span>✨</span> Create New
+      </a>
+      <a href="{% url 'history' %}" class="btn btn-secondary">
+        <span>📋</span> Back to History
+      </a>
+      {% if not confirm_delete %}
+        <form action="{% url 'delete' generation.id %}" method="POST" style="margin-left: auto;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger" id="btn-delete-prompt">
+            <span>🗑</span> Delete Generation
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</article>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'generator/base.html' %}
+
+{% block title %}Your Generations &mdash; AI Image Generator{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">
+      Your Generations
+      <span class="badge-count">{{ count }}</span>
+    </h1>
+    <p style="color: var(--secondary-text); margin-top: 6px;">Browse and manage all previously generated artwork stored in PostgreSQL.</p>
+  </div>
+  <a href="{% url 'home' %}" class="btn btn-primary" id="btn-history-create">
+    <span>✨</span> Generate New Image
+  </a>
+</div>
+
+{% if generations %}
+  <section class="history-grid" aria-label="Generated Images Gallery">
+    {% for item in generations %}
+      <article class="history-card" id="card-generation-{{ item.id }}">
+        <a href="{% url 'detail' item.id %}" class="history-image-link" aria-label="View {{ item.prompt }}">
+          <img src="{{ item.image_url }}" alt="{{ item.prompt }}" class="history-image" loading="lazy" referrerpolicy="no-referrer">
+        </a>
+        <div class="history-content">
+          <h2 class="history-prompt" title="{{ item.prompt }}">{{ item.prompt }}</h2>
+          <div class="history-badges">
+            <span class="tag-badge">{{ item.style }}</span>
+            <span class="tag-badge">{{ item.aspect_ratio }}</span>
+          </div>
+          <time datetime="{{ item.created_at|date:'c' }}" class="history-date">
+            {{ item.created_at|date:"F j, Y" }}
+          </time>
+          <div class="history-actions">
+            <div style="display: flex; gap: 8px;">
+              <a href="{% url 'detail' item.id %}" class="btn btn-secondary btn-sm" id="btn-view-{{ item.id }}">View</a>
+              <a href="{% url 'download' item.id %}" class="btn btn-primary btn-sm" download id="btn-download-{{ item.id }}">Download</a>
+            </div>
+            <form action="{% url 'delete' item.id %}" method="POST" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger btn-sm" id="btn-delete-{{ item.id }}" title="Delete this generation">Delete</button>
+            </form>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+{% else %}
+  <section class="empty-state-card" aria-label="Empty History">
+    <div class="empty-icon">✦</div>
+    <h2 class="empty-title">No generations yet</h2>
+    <p class="empty-desc">You haven't generated any AI images yet. Head back to the generator and bring your ideas to life!</p>
+    <div style="margin-top: 24px;">
+      <a href="{% url 'home' %}" class="btn btn-primary">
+        <span>✨</span> Create Your First Image
+      </a>
+    </div>
+  </section>
+{% endif %}
+{% endblock %}

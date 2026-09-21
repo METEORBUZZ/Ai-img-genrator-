@@ -1,0 +1,6 @@
+{
+  "name": "AI Image Generator",
+  "description": "Professional AI Image Generator web application with Python and Django server-side rendering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

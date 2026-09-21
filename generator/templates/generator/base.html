@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}AI Image Generator{% endblock %}</title>
+  <meta name="description" content="Professional AI Image Generator built with Python and Django server-side rendering.">
+  <link rel="stylesheet" href="{% static 'generator/css/style.css' %}">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="{% url 'home' %}" class="brand-link" id="nav-brand">
+        <span class="brand-icon">✦</span>
+        <span>AI Image Generator</span>
+      </a>
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li>
+            <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" id="nav-home">
+              Create
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'history' %}" class="nav-link {% if request.resolver_match.url_name == 'history' %}active{% endif %}" id="nav-history">
+              History
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content" class="content-wrapper" role="main">
+    <div class="container">
+      {% if messages %}
+        <div class="messages-container">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}
+      {% endblock %}
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <p>✦ AI Image Generator &mdash; Python &amp; Django Server-Side Architecture</p>
+      <p>Zero JavaScript &bull; Secure PostgreSQL Persistence &bull; Production AI Service</p>
+    </div>
+  </footer>
+</body>
+</html>

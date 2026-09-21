@@ -1,0 +1,13 @@
+{
+  "name": "ai-image-generator",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Professional AI Image Generator built with Python and Django",
+  "scripts": {
+    "dev": "python3 manage.py runserver 0.0.0.0:3000",
+    "build": "python3 manage.py check",
+    "start": "python3 manage.py runserver 0.0.0.0:3000",
+    "lint": "python3 manage.py check",
+    "test": "python3 manage.py test"
+  }
+}
